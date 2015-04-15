@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +18,7 @@ import java.lang.reflect.Field;
 public class MainActivity extends ActionBarActivity {
 
     private Intent intent;
-    private TextView myTextView;
+    private TextView myEditText;
     private static final int SUB_ACTIVITY = 1001;
 
     @Override
@@ -35,13 +36,13 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        myTextView = (TextView)findViewById(R.id.myTextViewMain);
+        myEditText = (EditText)findViewById(R.id.myEditText);
         Log.d("data", String.valueOf(data));
         Bundle dataBundle = data.getExtras();
         if (requestCode == SUB_ACTIVITY && dataBundle.getString("put.StrData") != null) {
             if (resultCode == RESULT_OK) {
                 this.setTitle(dataBundle.getString("put.StrData"));
-                myTextView.setText(dataBundle.getString("put.StrData"));
+                myEditText.setText(dataBundle.getString("put.StrData"));
             }
         }
     }

@@ -10,10 +10,6 @@ public class MyFileOpen extends Activity{
     private Intent intent;
     private MainActivity main_activity;
 
-    public void moveActivity(){
-        main_activity = new MainActivity();
-        intent = new Intent(main_activity,FileActivity.class);
-        startActivity(intent);
-    }
+
 
 }
