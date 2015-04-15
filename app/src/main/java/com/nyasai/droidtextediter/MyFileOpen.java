@@ -29,7 +29,7 @@ public class MyFileOpen extends Activity{
 
         try{
             FileInputStream inputStream = new FileInputStream(new File(fileName));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,DEFAULT_ENCORDING));
             while ((tempFiles = reader.readLine()) != null ){
                 files.append(tempFiles);
                 files.append("\n");
