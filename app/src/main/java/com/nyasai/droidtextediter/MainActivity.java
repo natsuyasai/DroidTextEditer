@@ -20,7 +20,7 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
 
     private Intent intent;
-    private TextView myEditText;
+    private TextView myTextView;
     private MyFileOpen myFileOpen;
     private static final int SUB_ACTIVITY = 1001;
 
@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
     //サブアクティビティからデータの受取
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        myEditText = (EditText)findViewById(R.id.myEditText);
+        myTextView = (TextView)findViewById(R.id.myTextViewMain);
         myFileOpen = new MyFileOpen();
         String fileStr = null;
 
@@ -50,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
             if (resultCode == RESULT_OK) {
                 this.setTitle(dataBundle.getString("put.StrData"));
                 fileStr = myFileOpen.fileLoad(dataBundle.getString("put.StrData"));
-                myEditText.setText(fileStr);
+                myTextView.setText(fileStr);
             }
         }
     }
