@@ -13,12 +13,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private Intent intent;
     private TextView myEditText;
+    private MyFileOpen myFileOpen;
     private static final int SUB_ACTIVITY = 1001;
 
     @Override
@@ -27,6 +30,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
     }
 
+    //アクティビティの移動
     private void moveActivity(){
         intent = new Intent(this,FileActivity.class);
         startActivityForResult(intent, SUB_ACTIVITY);
@@ -34,15 +38,19 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
+    //サブアクティビティからデータの受取
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         myEditText = (EditText)findViewById(R.id.myEditText);
-        Log.d("data", String.valueOf(data));
+        myFileOpen = new MyFileOpen();
+        String fileStr = null;
+
         Bundle dataBundle = data.getExtras();
         if (requestCode == SUB_ACTIVITY && dataBundle.getString("put.StrData") != null) {
             if (resultCode == RESULT_OK) {
                 this.setTitle(dataBundle.getString("put.StrData"));
-                myEditText.setText(dataBundle.getString("put.StrData"));
+                fileStr = myFileOpen.fileLoad(dataBundle.getString("put.StrData"));
+                myEditText.setText(fileStr);
             }
         }
     }
