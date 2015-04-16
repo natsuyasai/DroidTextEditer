@@ -22,6 +22,7 @@ import java.util.List;
 public class MyFileOpen extends Activity{
     //デフォルトエンコードの指定
     private static final String DEFAULT_ENCORDING = "UTF-8";
+    public int lineCount = 0;
 
     public String fileLoad(String fileName){
         StringBuilder files = new StringBuilder();
@@ -33,17 +34,15 @@ public class MyFileOpen extends Activity{
             while ((tempFiles = reader.readLine()) != null ){
                 files.append(tempFiles);
                 files.append("\n");
+                lineCount++;
                 Log.d("string", tempFiles);
             }
             reader.close();
         }catch (Exception e){
             files.append("This File null");
         }
-
         return files.toString();
     }
-
-
 
 
 
