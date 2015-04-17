@@ -24,6 +24,8 @@ public class MyFileOpen extends Activity{
     private static final String DEFAULT_ENCORDING = "UTF-8";
     public int lineCount = 0;
 
+
+
     public String fileLoad(String fileName){
         StringBuilder files = new StringBuilder();
         String tempFiles;
@@ -42,6 +44,10 @@ public class MyFileOpen extends Activity{
             files.append("This File null");
         }
         return files.toString();
+    }
+
+    public int getLines(){
+        return lineCount;
     }
 
 

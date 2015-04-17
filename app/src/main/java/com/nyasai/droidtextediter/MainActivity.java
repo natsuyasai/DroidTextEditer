@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -42,20 +43,35 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         myTextView = (TextView)findViewById(R.id.myTextViewMain);
-        myFileOpen = new MyFileOpen();
-        String fileStr = null;
 
         Bundle dataBundle = data.getExtras();
         if (requestCode == SUB_ACTIVITY && dataBundle.getString("put.StrData") != null) {
             if (resultCode == RESULT_OK) {
-                this.setTitle(dataBundle.getString("put.StrData"));
-                fileStr = myFileOpen.fileLoad(dataBundle.getString("put.StrData"));
-                myTextView.setText(fileStr);
+                this.myTextSet(dataBundle.getString("put.StrData"),dataBundle.getString("put.StrData"));
             }
         }
     }
 
+    private void myTextSet(String setTitle, String setText){
+        myFileOpen = new MyFileOpen();
+        String fileStr = null;
+        int textLines;
 
+        textLines = myFileOpen.getLines();
+        this.setTitle(setTitle);
+        fileStr = myFileOpen.fileLoad(setText);
+        myTextView.setText(fileStr);
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent e){
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            finish();
+        }
+        else {
+            return false;
+        }
+        return false;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
