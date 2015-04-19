@@ -22,13 +22,13 @@ import java.util.List;
 public class MyFileOpen extends Activity{
     //デフォルトエンコードの指定
     private static final String DEFAULT_ENCORDING = "UTF-8";
-    public int lineCount = 0;
-
+    private static int textLines;
 
 
     public String fileLoad(String fileName){
         StringBuilder files = new StringBuilder();
         String tempFiles;
+        textLines = 0;
 
         try{
             FileInputStream inputStream = new FileInputStream(new File(fileName));
@@ -36,8 +36,7 @@ public class MyFileOpen extends Activity{
             while ((tempFiles = reader.readLine()) != null ){
                 files.append(tempFiles);
                 files.append("\n");
-                lineCount++;
-                Log.d("string", tempFiles);
+                textLines++;
             }
             reader.close();
         }catch (Exception e){
@@ -46,10 +45,9 @@ public class MyFileOpen extends Activity{
         return files.toString();
     }
 
-    public int getLines(){
-        return lineCount;
+    public static int getLines(){
+        return textLines;
     }
-
 
 
 }

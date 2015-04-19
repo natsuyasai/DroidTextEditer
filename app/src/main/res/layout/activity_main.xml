@@ -24,20 +24,50 @@
         android:layout_alignParentStart="true"
         android:gravity="left" />
 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/myTextViewMain"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="temp"
-        android:textSize="@dimen/abc_text_size_medium_material"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:gravity="left"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:weightSum="1">
 
+        <TextView
+            android:id="@+id/myTextViewLines"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:background="@drawable/border"
+            />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/myTextViewMain"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="temp"
+            android:textSize="@dimen/abc_text_size_medium_material"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:gravity="left"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_weight="1.04"
+            android:scrollHorizontally="tue"
+            />
+        </HorizontalScrollView>
+
+    </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>

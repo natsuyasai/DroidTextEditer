@@ -2,6 +2,9 @@ package com.nyasai.droidtextediter;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -21,7 +24,8 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
 
     private Intent intent;
-    private TextView myTextView;
+    private TextView myTextViewMain;
+    private TextView myTextViewLines;
     private MyFileOpen myFileOpen;
     private static final int SUB_ACTIVITY = 1001;
 
@@ -42,27 +46,34 @@ public class MainActivity extends ActionBarActivity {
     //サブアクティビティからデータの受取
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        myTextView = (TextView)findViewById(R.id.myTextViewMain);
-
         Bundle dataBundle = data.getExtras();
         if (requestCode == SUB_ACTIVITY && dataBundle.getString("put.StrData") != null) {
             if (resultCode == RESULT_OK) {
                 this.myTextSet(dataBundle.getString("put.StrData"),dataBundle.getString("put.StrData"));
+
             }
         }
     }
 
-    private void myTextSet(String setTitle, String setText){
-        myFileOpen = new MyFileOpen();
-        String fileStr = null;
-        int textLines;
 
-        textLines = myFileOpen.getLines();
+    private void myTextSet(String setTitle, String setText){
+        String fileStr = null;
+        int textLinesLen = 0;
+        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
+        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
+        myFileOpen = new MyFileOpen();
+
+
         this.setTitle(setTitle);
         fileStr = myFileOpen.fileLoad(setText);
-        myTextView.setText(fileStr);
+        myTextViewMain.setText(fileStr);
+        textLinesLen = myFileOpen.getLines();
+        for(int i=1; i<=textLinesLen; i++){
+            myTextViewLines.append(String.valueOf(i) + "\n");
+        }
     }
 
+    //戻るボタンを押された際に強制終了しないようにする
     public boolean onKeyDown(int keyCode, KeyEvent e){
         if(keyCode == KeyEvent.KEYCODE_BACK){
             finish();
@@ -72,6 +83,7 @@ public class MainActivity extends ActionBarActivity {
         }
         return false;
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
