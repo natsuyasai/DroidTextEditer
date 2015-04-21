@@ -30,11 +30,6 @@ public class MainActivity extends ActionBarActivity {
     private static final int SUB_ACTIVITY = 1001;
 
 
-    //コンストラクタ
-    private MainActivity(){
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +54,9 @@ public class MainActivity extends ActionBarActivity {
             }
             if(resultCode == RESULT_CANCELED){
                 myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
+                myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
+                myTextViewLines.setText("");
+                this.setTitle(R.string.app_name);
                 myTextViewMain.setText("ファイルを選んでください");
             }
         }
