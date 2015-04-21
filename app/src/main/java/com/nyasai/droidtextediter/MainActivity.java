@@ -29,6 +29,12 @@ public class MainActivity extends ActionBarActivity {
     private MyFileOpen myFileOpen;
     private static final int SUB_ACTIVITY = 1001;
 
+
+    //コンストラクタ
+    private MainActivity(){
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +56,10 @@ public class MainActivity extends ActionBarActivity {
         if (requestCode == SUB_ACTIVITY && dataBundle.getString("put.StrData") != null) {
             if (resultCode == RESULT_OK) {
                 this.myTextSet(dataBundle.getString("put.StrData"),dataBundle.getString("put.StrData"));
-
+            }
+            if(resultCode == RESULT_CANCELED){
+                myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
+                myTextViewMain.setText("ファイルを選んでください");
             }
         }
     }
@@ -105,6 +114,8 @@ public class MainActivity extends ActionBarActivity {
             case R.id.settings_open:
                 this.moveActivity();
                 break;
+            case R.id.settings_search:
+                break;
             case R.id.settings_exit:
                 finish();
                 break;
@@ -113,4 +124,7 @@ public class MainActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
 }

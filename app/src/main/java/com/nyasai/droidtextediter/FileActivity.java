@@ -16,6 +16,7 @@ import android.net.Uri.Builder;
 import android.provider.Contacts.ContactMethods;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -167,4 +168,18 @@ public class FileActivity extends ListActivity {
         }
     }
 
+    //戻るボタンを押された際に強制終了しないようにする
+    public boolean dispatchKeyEvent(KeyEvent e){
+        if(e.getAction() == KeyEvent.KEYCODE_BACK){
+            return false;
+        }
+        else{
+            Intent intent = new Intent();
+            Bundle dataBundle = new Bundle();
+            dataBundle.putString("put.StrData", "Failed");
+            intent.putExtras(dataBundle);
+            setResult(RESULT_CANCELED, intent);
+            finish();
+            return true;}
+    }
 }
