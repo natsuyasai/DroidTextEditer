@@ -62,7 +62,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-
+    //テキストファイルのセット
     private void myTextSet(String setTitle, String setText){
         String fileStr = null;
         int textLinesLen = 0;
@@ -92,6 +92,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
+    //メニュー関連
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
