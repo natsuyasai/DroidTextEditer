@@ -9,7 +9,7 @@ public class FileTypeToCpp {
     private final FileTypeToCpp self = this;
 
 
-    private static final String[] cppDefine = {
+    private static final String[] CPPDEFINE = {
             "#define",
             "#elif",
             "#else",
