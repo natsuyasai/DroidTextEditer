@@ -40,7 +40,6 @@ public class MainActivity extends ActionBarActivity {
     private void moveActivity(){
         intent = new Intent(this,FileActivity.class);
         startActivityForResult(intent, SUB_ACTIVITY);
-        //startActivity(intent);
     }
 
 
@@ -50,7 +49,7 @@ public class MainActivity extends ActionBarActivity {
         Bundle dataBundle = data.getExtras();
         if (requestCode == SUB_ACTIVITY && dataBundle.getString("put.StrData") != null) {
             if (resultCode == RESULT_OK) {
-                this.myTextSet(dataBundle.getString("put.StrData"),dataBundle.getString("put.StrData"));
+                this.myTextSet(dataBundle.getString("put.StrData"), dataBundle.getString("put.StrData"));
             }
             if(resultCode == RESULT_CANCELED){
                 myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
@@ -63,7 +62,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     //テキストファイルのセット
-    private void myTextSet(String setTitle, String setText){
+    /*private void myTextSet(String setTitle, String setText){
         String fileStr = null;
         int textLinesLen = 0;
         myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
@@ -78,6 +77,37 @@ public class MainActivity extends ActionBarActivity {
         for(int i=1; i<=textLinesLen; i++){
             myTextViewLines.append(String.valueOf(i) + "\n");
         }
+    }*/
+
+    //テキストファイルのセット
+    private void myTextSet(String setTitle, String setText){
+        ArrayList<String> fileStr;
+        int textLinesLen = 0;
+        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
+        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
+        myFileOpen = new MyFileOpen();
+
+        this.clearTextView("","");
+        this.setTitle(setTitle);
+        fileStr = myFileOpen.fileLoad(setText);
+        textLinesLen = myFileOpen.getLines();
+        for(int i=0; i<fileStr.size(); i++){
+            Log.d("fileStr", String.valueOf(i));
+            myTextViewMain.append(fileStr.get(i));
+        }
+        for(int i=1; i<=textLinesLen; i++){
+            myTextViewLines.append(String.valueOf(i) + "\n");
+        }
+    }
+
+    //テキストビューのクリア
+    private void clearTextView(String newTitle,String oldTitle){
+        //そのうち実装
+        //今のタイトルと次に読み込もうとしたファイルのタイトルが同じかどうかで判定
+        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
+        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
+        myTextViewMain.setText("");
+        myTextViewLines.setText("");
     }
 
     //戻るボタンを押された際に強制終了しないようにする

@@ -25,7 +25,7 @@ public class MyFileOpen extends Activity{
     private static int textLines;
 
 
-    public String fileLoad(String fileName){
+    /*public String fileLoad(String fileName){
         StringBuilder files = new StringBuilder();
         String tempFiles;
         textLines = 0;
@@ -43,6 +43,25 @@ public class MyFileOpen extends Activity{
             files.append("This File null");
         }
         return files.toString();
+    }*/
+
+    public ArrayList<String> fileLoad(String fileName){
+        ArrayList<String> files = new ArrayList<String>();
+        String tempFiles;
+        textLines = 0;
+
+        try{
+            FileInputStream inputStream = new FileInputStream(new File(fileName));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,DEFAULT_ENCORDING));
+            while ((tempFiles = reader.readLine()) != null ){
+                files.add(tempFiles + "\n");
+                textLines++;
+            }
+            reader.close();
+        }catch (Exception e){
+            files.add("This File null");
+        }
+        return files;
     }
 
     public static int getLines(){
