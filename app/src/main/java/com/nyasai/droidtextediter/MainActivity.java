@@ -19,6 +19,8 @@ import android.widget.Toast;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -49,7 +51,7 @@ public class MainActivity extends ActionBarActivity {
         Bundle dataBundle = data.getExtras();
         if (requestCode == SUB_ACTIVITY && dataBundle.getString("put.StrData") != null) {
             if (resultCode == RESULT_OK) {
-                this.myTextSet(dataBundle.getString("put.StrData"), dataBundle.getString("put.StrData"));
+                this.myLoadText(dataBundle.getString("put.StrData"));
             }
             if(resultCode == RESULT_CANCELED){
                 myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
@@ -61,44 +63,56 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    //テキストファイルのセット
-    /*private void myTextSet(String setTitle, String setText){
-        String fileStr = null;
-        int textLinesLen = 0;
-        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
-        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
-        myFileOpen = new MyFileOpen();
 
-
-        this.setTitle(setTitle);
-        fileStr = myFileOpen.fileLoad(setText);
-        myTextViewMain.setText(fileStr);
-        textLinesLen = myFileOpen.getLines();
-        for(int i=1; i<=textLinesLen; i++){
-            myTextViewLines.append(String.valueOf(i) + "\n");
-        }
-    }*/
-
-    //テキストファイルのセット
-    private void myTextSet(String setTitle, String setText){
+    //ファイルの読み出し,タイトルのセット,ファイルタイプの結果の受け取り
+    private void myLoadText(String setText){
         ArrayList<String> fileStr;
         int textLinesLen = 0;
+        int fileTypeNum = 0;
         myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
         myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
         myFileOpen = new MyFileOpen();
-
         this.clearTextView("","");
-        this.setTitle(setTitle);
+        this.setTitle(setText);
+        fileTypeNum = this.checkFileType(setText);
         fileStr = myFileOpen.fileLoad(setText);
         textLinesLen = myFileOpen.getLines();
-        for(int i=0; i<fileStr.size(); i++){
-            Log.d("fileStr", String.valueOf(i));
-            myTextViewMain.append(fileStr.get(i));
-        }
-        for(int i=1; i<=textLinesLen; i++){
-            myTextViewLines.append(String.valueOf(i) + "\n");
-        }
+        this.myTextSet(fileStr,textLinesLen,fileTypeNum);
+
     }
+
+
+    //ファイルの表示
+    private void myTextSet(ArrayList<String> fileStr, int textLinesLen, int fileTypeNum){
+        switch (fileTypeNum){
+            case 0://txt
+                for(int i=0; i<fileStr.size(); i++){
+                    myTextViewMain.append(fileStr.get(i));
+                }
+                for(int i=1; i<=textLinesLen; i++){
+                    myTextViewLines.append(String.valueOf(i) + "\n");
+                }
+                break;
+            case 1://c
+                for(int i=0; i<fileStr.size(); i++){
+                    myTextViewMain.append(fileStr.get(i));
+                }
+                for(int i=1; i<=textLinesLen; i++){
+                    myTextViewLines.append(String.valueOf(i) + "\n");
+                }
+                break;
+            case 2://cpp
+                for(int i=0; i<fileStr.size(); i++){
+                    myTextViewMain.append(fileStr.get(i));
+                }
+                for(int i=1; i<=textLinesLen; i++){
+                    myTextViewLines.append(String.valueOf(i) + "\n");
+                }
+
+        }
+
+    }
+
 
     //テキストビューのクリア
     private void clearTextView(String newTitle,String oldTitle){
@@ -109,6 +123,24 @@ public class MainActivity extends ActionBarActivity {
         myTextViewMain.setText("");
         myTextViewLines.setText("");
     }
+
+
+    //ファイルタイプのチェック
+    private int checkFileType(String filePass){
+        String[] FILEFORMAT = {".*\\.txt" , ".*\\.c" , ".*\\.cpp"};
+        int fileTypeNum=0;
+        for(int i=0; i<FILEFORMAT.length; i++) {
+            Pattern myPattern = Pattern.compile(FILEFORMAT[i], Pattern.MULTILINE);
+            Matcher myMatcher = myPattern.matcher(filePass);
+            if(myMatcher.find()){
+                fileTypeNum = i;
+            }
+        }
+        return fileTypeNum;
+    }
+
+
+
 
     //戻るボタンを押された際に強制終了しないようにする
     public boolean onKeyDown(int keyCode, KeyEvent e){
@@ -157,3 +189,20 @@ public class MainActivity extends ActionBarActivity {
 
 
 }
+//テキストファイルのセット
+    /*private void myTextSet(String setTitle, String setText){
+        String fileStr = null;
+        int textLinesLen = 0;
+        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
+        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
+        myFileOpen = new MyFileOpen();
+
+
+        this.setTitle(setTitle);
+        fileStr = myFileOpen.fileLoad(setText);
+        myTextViewMain.setText(fileStr);
+        textLinesLen = myFileOpen.getLines();
+        for(int i=1; i<=textLinesLen; i++){
+            myTextViewLines.append(String.valueOf(i) + "\n");
+        }
+    }*/
