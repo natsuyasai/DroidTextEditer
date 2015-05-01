@@ -29,8 +29,12 @@ public class MainActivity extends ActionBarActivity {
     private TextView myTextViewMain;
     private TextView myTextViewLines;
     private MyFileOpen myFileOpen;
+    private FileTypeToCpp myFileTypeToCpp;
     private static final int SUB_ACTIVITY = 1001;
 
+    private void assignViews(){
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,7 @@ public class MainActivity extends ActionBarActivity {
     private void moveActivity(){
         intent = new Intent(this,FileActivity.class);
         startActivityForResult(intent, SUB_ACTIVITY);
+        this.assignViews();
     }
 
 
@@ -69,8 +74,6 @@ public class MainActivity extends ActionBarActivity {
         ArrayList<String> fileStr;
         int textLinesLen = 0;
         int fileTypeNum = 0;
-        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
-        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
         myFileOpen = new MyFileOpen();
         this.clearTextView("","");
         this.setTitle(setText);
@@ -84,6 +87,10 @@ public class MainActivity extends ActionBarActivity {
 
     //ファイルの表示
     private void myTextSet(ArrayList<String> fileStr, int textLinesLen, int fileTypeNum){
+        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
+        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
+        myFileTypeToCpp = new FileTypeToCpp();
+
         switch (fileTypeNum){
             case 0://txt
                 for(int i=0; i<fileStr.size(); i++){
@@ -102,6 +109,7 @@ public class MainActivity extends ActionBarActivity {
                 }
                 break;
             case 2://cpp
+                myFileTypeToCpp.setTexts(fileStr);
                 for(int i=0; i<fileStr.size(); i++){
                     myTextViewMain.append(fileStr.get(i));
                 }
