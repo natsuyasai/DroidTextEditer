@@ -1,10 +1,5 @@
 package com.nyasai.droidtextediter;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -16,9 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,20 +26,23 @@ public class MainActivity extends ActionBarActivity {
     private static final int SUB_ACTIVITY = 1001;
 
     private void assignViews(){
-
+        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
+        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
+        myFileOpen = new MyFileOpen();
+        myFileTypeToCpp = new FileTypeToCpp();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.assignViews();
     }
 
     //アクティビティの移動
     private void moveActivity(){
         intent = new Intent(this,FileActivity.class);
         startActivityForResult(intent, SUB_ACTIVITY);
-        this.assignViews();
     }
 
 
@@ -59,8 +55,6 @@ public class MainActivity extends ActionBarActivity {
                 this.myLoadText(dataBundle.getString("put.StrData"));
             }
             if(resultCode == RESULT_CANCELED){
-                myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
-                myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
                 myTextViewLines.setText("");
                 this.setTitle(R.string.app_name);
                 myTextViewMain.setText("ファイルを選んでください");
@@ -74,7 +68,6 @@ public class MainActivity extends ActionBarActivity {
         ArrayList<String> fileStr;
         int textLinesLen = 0;
         int fileTypeNum = 0;
-        myFileOpen = new MyFileOpen();
         this.clearTextView("","");
         this.setTitle(setText);
         fileTypeNum = this.checkFileType(setText);
@@ -87,9 +80,6 @@ public class MainActivity extends ActionBarActivity {
 
     //ファイルの表示
     private void myTextSet(ArrayList<String> fileStr, int textLinesLen, int fileTypeNum){
-        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
-        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
-        myFileTypeToCpp = new FileTypeToCpp();
 
         switch (fileTypeNum){
             case 0://txt
@@ -109,10 +99,7 @@ public class MainActivity extends ActionBarActivity {
                 }
                 break;
             case 2://cpp
-                myFileTypeToCpp.setTexts(fileStr);
-                for(int i=0; i<fileStr.size(); i++){
-                    myTextViewMain.append(fileStr.get(i));
-                }
+                myFileTypeToCpp.textSets(fileStr, this);
                 for(int i=1; i<=textLinesLen; i++){
                     myTextViewLines.append(String.valueOf(i) + "\n");
                 }
@@ -126,8 +113,6 @@ public class MainActivity extends ActionBarActivity {
     private void clearTextView(String newTitle,String oldTitle){
         //そのうち実装
         //今のタイトルと次に読み込もうとしたファイルのタイトルが同じかどうかで判定
-        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
-        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
         myTextViewMain.setText("");
         myTextViewLines.setText("");
     }
