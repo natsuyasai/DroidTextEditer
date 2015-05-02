@@ -3,5 +3,5 @@
     android:id="@+id/myTextView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textSize="@dimen/abc_text_size_large_material"
+    android:textSize="35sp"
     />

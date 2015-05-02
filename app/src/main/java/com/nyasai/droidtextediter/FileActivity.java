@@ -69,7 +69,7 @@ public class FileActivity extends ListActivity {
             Bundle dataBundle = new Bundle();
             dataBundle.putString("put.StrData", aDirectory.getPath());
             intent.putExtras(dataBundle);
-            Log.d("log2", aDirectory.getPath());
+            //Log.d("log2", aDirectory.getPath());
             setResult(RESULT_OK, intent);
             finish();
         }
@@ -143,7 +143,7 @@ public class FileActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        Log.d("debug2", String.valueOf(getListView().getAdapter().getItem(position)));
+        //Log.d("debug2", String.valueOf(getListView().getAdapter().getItem(position)));
         //int selectionRowID = (int) this.getSelectedItemId();
         //String selectedFileString = this.directoryEntries.get(selectionRowID);
         String selectedFileString = String.valueOf(getListView().getAdapter().getItem(position));
