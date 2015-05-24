@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,8 +32,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         private final String CHECKSTR4="~|!|%|&|=|:|;|\"|,|/|<|>|\\^|\\*|\\(|\\)|\\-|\\+|\\{|\\}|\\[|\\]|\\.|\\?";
         private final String CHECKCOMMENT = "//";
         private final String SPLITPATTERN = "(?<= )|(?= )|(?<=-)|(?=-)|(?<=\\()|(?=\\()|(?<=\\))|(?=\\))|(?<=\\*)|(?=\\*)|(?<=\")|(?=\")|(?<=;)|(?=;)" +
-                                        "|(?<=:)|(?=:)|(?<==)|(?==)|(?<=,)|(?=,)|(?<=>)|(?=>)|(?<=\\[)|(?=\\[)|(?<=\\])|(?=\\])|(?<=\\.)|(?=\\.)|(?<=\\s)|(?=\\s)";
-
+                                        "|(?<=:)|(?=:)|(?<==)|(?==)|(?<=,)|(?=,)|(?<=>)|(?=>)|(?<=\\[)|(?=\\[)|(?<=\\])|(?=\\])|(?<=\\.)|(?=\\.)";
 
 
         public FileTypeToCpp(ActionBarActivity actionBarActivity) {
@@ -64,10 +64,16 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         //非同期処理後の結果をUIに反映
         @Override
         protected void onPostExecute(ArrayList<String> strings) {
+                Pattern pattern = Pattern.compile(" +");
+                Matcher matcher;
                 if(strings!=null) {
                         TextView textView = (TextView) this.actionBarActivity.findViewById(R.id.myTextViewMain);
                         for (int i = 0; i < strings.size(); i++) {
                                 textView.append(Html.fromHtml(strings.get(i)));
+                                matcher = pattern.matcher(strings.get(i));
+                                if(matcher.find()){
+                                        textView.append(" ");
+                                }
                         }
                 }
                 else{
@@ -96,11 +102,10 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
                 Pattern splitPattern = Pattern.compile(SPLITPATTERN);
 
                 for (int i=0; i<fileStr.size(); i++){
-                        fileStrOneWords = splitPattern.split(fileStr.get(i));
+                        fileStrOneWords = splitPattern.split(fileStr.get(i),-1);
                         for(int j=0; j<fileStrOneWords.length; j++){
                                 typeFlag = this.checkReservedword(fileStrOneWords[j]);
                                 endFiles.add(this.textSetBranch(typeFlag, fileStrOneWords[j]));
-
                         }
                         fileStrOneWords = null;
                         endFiles.add("<br/>");
@@ -114,13 +119,14 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
                 Pattern myPattern1 = Pattern.compile(CHECKSTR1,Pattern.CASE_INSENSITIVE|Pattern.MULTILINE|Pattern.DOTALL|Pattern.UNICODE_CASE);
                 Pattern myPattern2 = Pattern.compile(CHECKSTR2,Pattern.CASE_INSENSITIVE|Pattern.MULTILINE|Pattern.DOTALL|Pattern.UNICODE_CASE);
                 Pattern myPattern3 = Pattern.compile(CHECKSTR3,Pattern.CASE_INSENSITIVE|Pattern.MULTILINE|Pattern.DOTALL|Pattern.UNICODE_CASE);
-                Pattern myPattern4 = Pattern.compile(CHECKSTR4,Pattern.CASE_INSENSITIVE|Pattern.MULTILINE|Pattern.DOTALL|Pattern.UNICODE_CASE);
-                Pattern commentPattern = Pattern.compile(CHECKCOMMENT,Pattern.CASE_INSENSITIVE|Pattern.MULTILINE|Pattern.DOTALL|Pattern.UNICODE_CASE);
+                Pattern myPattern4 = Pattern.compile(CHECKSTR4, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL | Pattern.UNICODE_CASE);
+                Pattern commentPattern = Pattern.compile(CHECKCOMMENT, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL | Pattern.UNICODE_CASE);
                 Matcher myMatcher1 = myPattern1.matcher(tempStr);
                 Matcher myMatcher2 = myPattern2.matcher(tempStr);
                 Matcher myMatcher3 = myPattern3.matcher(tempStr);
                 Matcher myMatcher4 = myPattern4.matcher(tempStr);
                 Matcher commentMather = commentPattern.matcher(tempStr);
+
 
                 if(myMatcher1.matches()){
                         paternFlag = 1;
