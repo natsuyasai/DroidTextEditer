@@ -1,8 +1,10 @@
 package com.nyasai.droidtextediter;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -73,14 +75,13 @@ public class MainActivity extends ActionBarActivity {
         fileTypeNum = this.checkFileType(setText);
         fileStr = myFileOpen.fileLoad(setText);
         textLinesLen = myFileOpen.getLines();
-        this.myTextSet(fileStr,textLinesLen,fileTypeNum);
+        this.myChangeText(fileStr,textLinesLen,fileTypeNum);
 
     }
 
 
-    //ファイルの表示
-    private void myTextSet(ArrayList<String> fileStr, int textLinesLen, int fileTypeNum){
-
+    //文字色の置き換え
+    private void myChangeText(ArrayList<String> fileStr, int textLinesLen, int fileTypeNum){
         switch (fileTypeNum){
             case 0://txt
                 for(int i=0; i<fileStr.size(); i++){
@@ -99,14 +100,22 @@ public class MainActivity extends ActionBarActivity {
                 }
                 break;
             case 2://cpp
-                myFileTypeToCpp.textSets(fileStr, this);
+                this.myTextSets(myFileTypeToCpp.textSets(fileStr, this));
                 for(int i=1; i<=textLinesLen; i++){
                     myTextViewLines.append(String.valueOf(i) + "\n");
                 }
-
+                break;
         }
 
     }
+
+    //文字のセット
+    private void myTextSets(ArrayList<String> files){
+        for (int i=0; i<files.size(); i++){
+            myTextViewMain.append(Html.fromHtml(files.get(i)));
+        }
+    }
+
 
 
     //テキストビューのクリア

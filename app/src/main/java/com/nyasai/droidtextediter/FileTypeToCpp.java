@@ -1,9 +1,9 @@
 package com.nyasai.droidtextediter;
 
+import android.os.AsyncTask;
 import android.text.Html;
-import android.util.Log;
 import android.widget.TextView;
-import java.lang.Object;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +23,7 @@ public class FileTypeToCpp {
         private final String CHECKCOMMENT = "//";
         private final String SPLITPATTERN = "(?<= )|(?= )|(?<=-)|(?=-)|(?<=\\()|(?=\\()|(?<=\\))|(?=\\))|(?<=\\*)|(?=\\*)|(?<=\")|(?=\")|(?<=;)|(?=;)" +
                                         "|(?<=:)|(?=:)|(?<==)|(?==)|(?<=,)|(?=,)|(?<=>)|(?=>)|(?<=\\[)|(?=\\[)|(?<=\\])|(?=\\])|(?<=\\.)|(?=\\.)|(?<=\\s)|(?=\\s)";
+
 
         //文字のチェック
         private int checkReservedword(String tempStr){
@@ -53,30 +54,32 @@ public class FileTypeToCpp {
                 return paternFlag;
         }
 
-        private void textSetBranch(int typeFlag, String setText, TextView myTextViewMain){
+        private String textSetBranch(int typeFlag, String setText, TextView myTextViewMain){
                 switch (typeFlag){
                         case 0:
-                                myTextViewMain.append(setText);
-                                break;
+                                //myTextViewMain.append(setText);
+                                return setText;
                         case 1:
-                                myTextViewMain.append(Html.fromHtml("<font color=#008000>"+setText+"</font>"));
-                                break;
+                                //myTextViewMain.append(Html.fromHtml("<font color=#008000>"+setText+"</font>"));
+                                return ("<font color=#008000>"+setText+"</font>");
                         case 2:
-                                myTextViewMain.append(Html.fromHtml("<font color=#DAA520>"+setText+"</font>"));
-                                break;
+                                //myTextViewMain.append(Html.fromHtml("<font color=#DAA520>"+setText+"</font>"));
+                                return ("<font color=#DAA520>"+setText+"</font>");
                         case 3:
-                                myTextViewMain.append(Html.fromHtml("<font color=#4169E1>"+setText+"</font>"));
-                                break;
+                                //myTextViewMain.append(Html.fromHtml("<font color=#4169E1>"+setText+"</font>"));
+                                return ("<font color=#4169E1>"+setText+"</font>");
                         case 4:
-                                myTextViewMain.append(Html.fromHtml("<font color=#B8860B>"+setText+"</font>"));
-                                break;
+                                //myTextViewMain.append(Html.fromHtml("<font color=#B8860B>"+setText+"</font>"));
+                                return ("<font color=#B8860B>"+setText+"</font>");
 
                 }
+                return null;
         }
 
-        public void textSets(ArrayList<String> fileStr, MainActivity mainActivity){
+        public ArrayList<String> textSets(ArrayList<String> fileStr, MainActivity mainActivity){
                 myTextViewMain = (TextView)mainActivity.findViewById(R.id.myTextViewMain);
                 String[] fileStrOneWords;
+                ArrayList<String> endFiles = new ArrayList<String>();
                 int typeFlag = 0;
                 Pattern splitPattern = Pattern.compile(SPLITPATTERN);
 
@@ -84,10 +87,12 @@ public class FileTypeToCpp {
                         fileStrOneWords = splitPattern.split(fileStr.get(i));
                         for(int j=0; j<fileStrOneWords.length; j++){
                                 typeFlag = this.checkReservedword(fileStrOneWords[j]);
-                                this.textSetBranch(typeFlag, fileStrOneWords[j], myTextViewMain);
+                                endFiles.add(this.textSetBranch(typeFlag, fileStrOneWords[j], myTextViewMain));
                         }
                         fileStrOneWords = null;
+                        endFiles.add("<br/>");
                 }
+                return endFiles;
         }
 
 }
