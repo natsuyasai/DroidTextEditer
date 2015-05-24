@@ -100,6 +100,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
                         for(int j=0; j<fileStrOneWords.length; j++){
                                 typeFlag = this.checkReservedword(fileStrOneWords[j]);
                                 endFiles.add(this.textSetBranch(typeFlag, fileStrOneWords[j]));
+
                         }
                         fileStrOneWords = null;
                         endFiles.add("<br/>");
@@ -140,19 +141,14 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         private String textSetBranch(int typeFlag, String setText){
                 switch (typeFlag){
                         case 0:
-                                //myTextViewMain.append(setText);
                                 return setText;
                         case 1:
-                                //myTextViewMain.append(Html.fromHtml("<font color=#008000>"+setText+"</font>"));
                                 return ("<font color=#008000>"+setText+"</font>");
                         case 2:
-                                //myTextViewMain.append(Html.fromHtml("<font color=#DAA520>"+setText+"</font>"));
                                 return ("<font color=#DAA520>"+setText+"</font>");
                         case 3:
-                                //myTextViewMain.append(Html.fromHtml("<font color=#4169E1>"+setText+"</font>"));
                                 return ("<font color=#4169E1>"+setText+"</font>");
                         case 4:
-                                //myTextViewMain.append(Html.fromHtml("<font color=#B8860B>"+setText+"</font>"));
                                 return ("<font color=#B8860B>"+setText+"</font>");
 
                 }
