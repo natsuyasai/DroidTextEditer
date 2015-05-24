@@ -64,7 +64,6 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         //非同期処理後の結果をUIに反映
         @Override
         protected void onPostExecute(ArrayList<String> strings) {
-                if (progressDialog.getShowsDialog()){progressDialog.dismiss();}
                 if(strings!=null) {
                         TextView textView = (TextView) this.actionBarActivity.findViewById(R.id.myTextViewMain);
                         for (int i = 0; i < strings.size(); i++) {
@@ -75,6 +74,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
                         TextView textView = (TextView) this.actionBarActivity.findViewById(R.id.myTextViewMain);
                         textView.setText("");
                 }
+                if (progressDialog.getShowsDialog()){progressDialog.dismiss();}
         }
 
         //キャンセル時の処理
