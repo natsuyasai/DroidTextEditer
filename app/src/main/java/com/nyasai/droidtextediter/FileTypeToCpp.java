@@ -69,6 +69,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
                 if(strings!=null) {
                         TextView textView = (TextView) this.actionBarActivity.findViewById(R.id.myTextViewMain);
                         for (int i = 0; i < strings.size(); i++) {
+                                //ここで空白が消える！！
                                 textView.append(Html.fromHtml(strings.get(i)));
                                 matcher = pattern.matcher(strings.get(i));
                                 if(matcher.find()){
