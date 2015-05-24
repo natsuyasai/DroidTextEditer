@@ -31,7 +31,6 @@ public class MainActivity extends ActionBarActivity {
         myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
         myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
         myFileOpen = new MyFileOpen();
-        myFileTypeToCpp = new FileTypeToCpp();
     }
 
     @Override
@@ -82,6 +81,7 @@ public class MainActivity extends ActionBarActivity {
 
     //文字色の置き換え
     private void myChangeText(ArrayList<String> fileStr, int textLinesLen, int fileTypeNum){
+        myFileTypeToCpp = new FileTypeToCpp(this);
         switch (fileTypeNum){
             case 0://txt
                 for(int i=0; i<fileStr.size(); i++){
@@ -92,28 +92,20 @@ public class MainActivity extends ActionBarActivity {
                 }
                 break;
             case 1://c
-                for(int i=0; i<fileStr.size(); i++){
-                    myTextViewMain.append(fileStr.get(i));
-                }
+                myFileTypeToCpp.execute(fileStr);
                 for(int i=1; i<=textLinesLen; i++){
                     myTextViewLines.append(String.valueOf(i) + "\n");
                 }
                 break;
             case 2://cpp
-                this.myTextSets(myFileTypeToCpp.textSets(fileStr, this));
+                //this.myTextSets(myFileTypeToCpp.textSets(fileStr));
+                myFileTypeToCpp.execute(fileStr);
                 for(int i=1; i<=textLinesLen; i++){
                     myTextViewLines.append(String.valueOf(i) + "\n");
                 }
                 break;
         }
 
-    }
-
-    //文字のセット
-    private void myTextSets(ArrayList<String> files){
-        for (int i=0; i<files.size(); i++){
-            myTextViewMain.append(Html.fromHtml(files.get(i)));
-        }
     }
 
 

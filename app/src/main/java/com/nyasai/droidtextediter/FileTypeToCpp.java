@@ -1,16 +1,25 @@
 package com.nyasai.droidtextediter;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class FileTypeToCpp {
-        private TextView myTextViewMain;
+public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayList<String>>{
+
+        ActionBarActivity actionBarActivity;
+        MyProgressDialog progressDialog = null;
+
         private final String CHECKSTR1= "int|long|short|signed|unsigned|float|double|bool|char|wchar_t|" +
                 "void|auto|class|struct|union|enum|const|volatile|extern|" +
                 "register|static|mutable|friend|explicit|inline|virtual|" +
@@ -24,6 +33,79 @@ public class FileTypeToCpp {
         private final String SPLITPATTERN = "(?<= )|(?= )|(?<=-)|(?=-)|(?<=\\()|(?=\\()|(?<=\\))|(?=\\))|(?<=\\*)|(?=\\*)|(?<=\")|(?=\")|(?<=;)|(?=;)" +
                                         "|(?<=:)|(?=:)|(?<==)|(?==)|(?<=,)|(?=,)|(?<=>)|(?=>)|(?<=\\[)|(?=\\[)|(?<=\\])|(?=\\])|(?<=\\.)|(?=\\.)|(?<=\\s)|(?=\\s)";
 
+
+
+        public FileTypeToCpp(ActionBarActivity actionBarActivity) {
+                this.actionBarActivity = actionBarActivity;
+        }
+
+
+        //前処理(プログレスバーの表示準備とか)
+        @Override
+        protected void onPreExecute() {
+                @SuppressWarnings({ "serial" })
+                Serializable Cancel_Listener = new MyProgressDialog.CancelListener() {
+                        @Override
+                        public void canceled(DialogInterface _interface) {
+                                cancel(true); // これをTrueにすることでキャンセルされ、onCancelledが呼び出される。
+                        }
+                };
+                progressDialog = MyProgressDialog.newInstance("処理中", "しばらくお待ちください", true, Cancel_Listener);
+                progressDialog.show((actionBarActivity).getFragmentManager(), "progress");
+        }
+
+
+        //非同期処理
+        @Override
+        protected ArrayList<String> doInBackground(ArrayList<String>... params) {
+                return this.textSets(params[0]);
+        }
+
+        //非同期処理後の結果をUIに反映
+        @Override
+        protected void onPostExecute(ArrayList<String> strings) {
+                if (progressDialog.getShowsDialog()){progressDialog.dismiss();}
+                if(strings!=null) {
+                        TextView textView = (TextView) this.actionBarActivity.findViewById(R.id.myTextViewMain);
+                        for (int i = 0; i < strings.size(); i++) {
+                                textView.append(Html.fromHtml(strings.get(i)));
+                        }
+                }
+                else{
+                        TextView textView = (TextView) this.actionBarActivity.findViewById(R.id.myTextViewMain);
+                        textView.setText("");
+                }
+        }
+
+        //キャンセル時の処理
+        @Override
+        protected void onCancelled() {
+                if (progressDialog.getShowsDialog()){
+                        progressDialog.dismiss();
+                }
+                Toast.makeText(actionBarActivity, "Canceled", Toast.LENGTH_SHORT).show();
+                TextView textView = (TextView) this.actionBarActivity.findViewById(R.id.myTextViewMain);
+                textView.setText("");
+        }
+
+        //メイン部分
+        public ArrayList<String> textSets(ArrayList<String> fileStr){
+                String[] fileStrOneWords;
+                ArrayList<String> endFiles = new ArrayList<String>();
+                int typeFlag = 0;
+                Pattern splitPattern = Pattern.compile(SPLITPATTERN);
+
+                for (int i=0; i<fileStr.size(); i++){
+                        fileStrOneWords = splitPattern.split(fileStr.get(i));
+                        for(int j=0; j<fileStrOneWords.length; j++){
+                                typeFlag = this.checkReservedword(fileStrOneWords[j]);
+                                endFiles.add(this.textSetBranch(typeFlag, fileStrOneWords[j]));
+                        }
+                        fileStrOneWords = null;
+                        endFiles.add("<br/>");
+                }
+                return endFiles;
+        }
 
         //文字のチェック
         private int checkReservedword(String tempStr){
@@ -54,7 +136,8 @@ public class FileTypeToCpp {
                 return paternFlag;
         }
 
-        private String textSetBranch(int typeFlag, String setText, TextView myTextViewMain){
+        //文字の種類によって色分け
+        private String textSetBranch(int typeFlag, String setText){
                 switch (typeFlag){
                         case 0:
                                 //myTextViewMain.append(setText);
@@ -76,23 +159,6 @@ public class FileTypeToCpp {
                 return null;
         }
 
-        public ArrayList<String> textSets(ArrayList<String> fileStr, MainActivity mainActivity){
-                myTextViewMain = (TextView)mainActivity.findViewById(R.id.myTextViewMain);
-                String[] fileStrOneWords;
-                ArrayList<String> endFiles = new ArrayList<String>();
-                int typeFlag = 0;
-                Pattern splitPattern = Pattern.compile(SPLITPATTERN);
 
-                for (int i=0; i<fileStr.size(); i++){
-                        fileStrOneWords = splitPattern.split(fileStr.get(i));
-                        for(int j=0; j<fileStrOneWords.length; j++){
-                                typeFlag = this.checkReservedword(fileStrOneWords[j]);
-                                endFiles.add(this.textSetBranch(typeFlag, fileStrOneWords[j], myTextViewMain));
-                        }
-                        fileStrOneWords = null;
-                        endFiles.add("<br/>");
-                }
-                return endFiles;
-        }
 
 }
