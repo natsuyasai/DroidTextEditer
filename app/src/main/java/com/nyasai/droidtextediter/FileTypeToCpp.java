@@ -21,16 +21,16 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         ActionBarActivity actionBarActivity;
         MyProgressDialog progressDialog = null;
 
-        private final String CHECKSTR1= "int|long|short|signed|unsigned|float|double|bool|char|wchar_t|" +
+        private final String CHECKSTR1= "(int|long|short|signed|unsigned|float|double|bool|char|wchar_t|" +
                 "void|auto|class|struct|union|enum|const|volatile|extern|" +
                 "register|static|mutable|friend|explicit|inline|virtual|" +
-                "public|protected|private|template|typname|asm|true|false|";
-        private final String CHECKSTR2= "typedef|operator|this|if|else|for|while|do|switch|case|default|" +
+                "public|protected|private|template|typname|asm|true|false|)";
+        private final String CHECKSTR2= "(typedef|operator|this|if|else|for|while|do|switch|case|default|" +
                 "break|continue|goto|return|try|catch|new|delete|dynamic_cast|static_cast|const_cast|reinterpret_cast|" +
-                "sizeof|typeid|throw|namespace|using|#include|#define|and|and_eq|bitand|bitor|compl|not|not_eq|or|or_eq|xor|xor_eq|#if|#endif";
+                "sizeof|typeid|throw|namespace|using|#include|#define|and|and_eq|bitand|bitor|compl|not|not_eq|or|or_eq|xor|xor_eq|#if|#endif)";
         private final String CHECKSTR3="[0-9]";
         private final String CHECKSTR4="~|!|%|&|=|:|;|\"|,|/|<|>|\\^|\\*|\\(|\\)|\\-|\\+|\\{|\\}|\\[|\\]|\\.|\\?";
-        private final String CHECKCOMMENT = "//";
+        private final String CHECKCOMMENT = "^//.*\n|^/\\*.*\n";
         private final String SPLITPATTERN = "(?<= )|(?= )|(?<=-)|(?=-)|(?<=\\()|(?=\\()|(?<=\\))|(?=\\))|(?<=\\*)|(?=\\*)|(?<=\")|(?=\")|(?<=;)|(?=;)" +
                                         "|(?<=:)|(?=:)|(?<==)|(?==)|(?<=,)|(?=,)|(?<=>)|(?=>)|(?<=\\[)|(?=\\[)|(?<=\\])|(?=\\])|(?<=\\.)|(?=\\.)";
 
@@ -64,17 +64,10 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         //非同期処理後の結果をUIに反映
         @Override
         protected void onPostExecute(ArrayList<String> strings) {
-                Pattern pattern = Pattern.compile(" +");
-                Matcher matcher;
                 if(strings!=null) {
                         TextView textView = (TextView) this.actionBarActivity.findViewById(R.id.myTextViewMain);
                         for (int i = 0; i < strings.size(); i++) {
-                                //ここで空白が消える！！
                                 textView.append(Html.fromHtml(strings.get(i)));
-                                matcher = pattern.matcher(strings.get(i));
-                                if(matcher.find()){
-                                        textView.append(" ");
-                                }
                         }
                 }
                 else{
@@ -129,6 +122,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
                 Matcher commentMather = commentPattern.matcher(tempStr);
 
 
+
                 if(myMatcher1.matches()){
                         paternFlag = 1;
                 }
@@ -141,22 +135,40 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
                 if(myMatcher4.matches()){
                         paternFlag = 4;
                 }
+                //if(commentMather.find()){
+                //        paternFlag = 5;
+                //}
                 return paternFlag;
         }
 
         //文字の種類によって色分け
         private String textSetBranch(int typeFlag, String setText){
+            Pattern pattern = Pattern.compile(" +",Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(setText);
+            //スペースをhtmlでも認識されるように変換
+            if(matcher.find()){
+                    setText = matcher.replaceAll("&nbsp;");
+                    //Log.d("space", "***-" + setText + "-***");
+            }
                 switch (typeFlag){
                         case 0:
+                                Log.d("case 0",setText);
                                 return setText;
                         case 1:
-                                return ("<font color=#008000>"+setText+"</font>");
+                                Log.d("case 1",setText);
+                                return ("<font color=#8B4513>"+setText+"</font>");
                         case 2:
+                                Log.d("case 2",setText);
                                 return ("<font color=#DAA520>"+setText+"</font>");
                         case 3:
+                                Log.d("case 3",setText);
                                 return ("<font color=#4169E1>"+setText+"</font>");
                         case 4:
+                                Log.d("case 4",setText);
                                 return ("<font color=#B8860B>"+setText+"</font>");
+                        case 5:
+                                Log.d("case 5",setText);
+                                return ("<font color=#008000>"+setText+"</font>");
 
                 }
                 return null;
