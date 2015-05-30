@@ -27,7 +27,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
     <LinearLayout
         android:orientation="horizontal"
@@ -71,3 +72,4 @@
     </ScrollView>
 
 </RelativeLayout>
+    <!--android:textIsSelectable="true"-->
