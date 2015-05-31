@@ -27,22 +27,32 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
     private static final int FUNC = 2;
     private static final int VALUE = 3;
     private static final int SYMBOL = 4;
-    private static final int COMENT = 5;
+    private static final int COMMENT = 5;
     private static final int STRING = 6;
 
-    private final String CHECKSTR1 = "(int|long|short|signed|unsigned|float|double|bool|char|wchar_t|" +
+    private static boolean commentFlag = false;
+    private static boolean commentsFlag = false;
+    private static boolean stringFlag = false;
+    private static boolean includeFlag = false;
+
+    private final String CHECKVARIABLE = "(int|long|short|signed|unsigned|float|double|bool|char|wchar_t|" +
             "void|auto|class|struct|union|enum|const|volatile|extern|" +
             "register|static|mutable|friend|explicit|inline|virtual|" +
             "public|protected|private|template|typname|asm|true|false|)";
-    private final String CHECKSTR2 = ".*(typedef|operator|this|if|else|for|while|do|switch|case|default|" +
+    private final String CHECKFUNC = ".*(typedef|operator|this|if|else|for|while|do|switch|case|default|" +
             "break|continue|goto|return|try|catch|new|delete|dynamic_cast|static_cast|const_cast|reinterpret_cast|" +
             "sizeof|typeid|throw|namespace|using|#include|#define|and|and_eq|bitand|bitor|compl|not|not_eq|or|or_eq|xor|xor_eq|#if|#endif)";
-    private final String CHECKSTR3 = "[0-9]";
-    private final String CHECKSTR4 = "~|!|%|&|=|:|;|\"|'|,|/|<|>|&|\\||\\^|\\*|\\(|\\)|\\-|\\+|\\{|\\}|\\[|\\]|\\.|\\?";
-    private final String CHECKCOMMENT = "^//.*\n|^/\\*.*\n";
+    private final String CHECKVALUE = "[0-9]";
+    private final String CHECKSYMBOL = "~|!|%|&|=|:|;|\"|'|,|/|<|>|&|\\||\\^|\\*|\\(|\\)|\\-|\\+|\\{|\\}|\\[|\\]|\\.|\\?";
+    private final String CHECKCOMMENT = "//";
+    private final String CHECKCOMMENTS = "/\\*";
+    private final String CHECKSTRING = "\"";
+    private final String CHECKINCLUDE = "#include";
+    private final String CHECKENDLINE = "\n";
+    private final String CHECKENDCOMMENTS = "\\*/";
     private final String SPLITPATTERN = "(?<= )|(?= )|(?<=-)|(?=-)|(?<=\\()|(?=\\()|(?<=\\))|(?=\\))|(?<=\\*)|(?=\\*)|(?<=\")|(?=\")|(?<=\')|(?=\')|(?<=;)|(?=;)|(?<=\t)|(?=\t)" +
             "|(?<=:)|(?=:)|(?<==)|(?==)|(?<=,)|(?=,)|(?<=>)|(?=>)|(?<=\\[)|(?=\\[)|(?<=\\])|(?=\\])|(?<=\\.)|(?=\\.)|(?=\\})|(?<=\\})|(?=\\{)|(?<=\\{)" +
-            "|(?<=&)|(?=&)|(?<=\\|)|(?=\\|)";
+            "|(?<=&)|(?=&)|(?<=\\|)|(?=\\|)|(?<=//)|(?=//)|(?<=/\\*)|(?=/\\*)|(?<=\\*/)|(?=\\*/)|(?<=!)|(?=!)";
 
 
     //コンストラクタ
@@ -121,35 +131,71 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
 
     //文字のチェック
     private int checkReservedword(String tempStr) {
-        int paternFlag = NOMAL;
-        Pattern myPattern1 = Pattern.compile(CHECKSTR1, Pattern.DOTALL | Pattern.UNIX_LINES);
-        Pattern myPattern2 = Pattern.compile(CHECKSTR2, Pattern.DOTALL | Pattern.UNIX_LINES);
-        Pattern myPattern3 = Pattern.compile(CHECKSTR3, Pattern.DOTALL);
-        Pattern myPattern4 = Pattern.compile(CHECKSTR4, Pattern.DOTALL);
-        Pattern commentPattern = Pattern.compile(CHECKCOMMENT, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL | Pattern.UNICODE_CASE);
-        Matcher myMatcher1 = myPattern1.matcher(tempStr);
-        Matcher myMatcher2 = myPattern2.matcher(tempStr);
-        Matcher myMatcher3 = myPattern3.matcher(tempStr);
-        Matcher myMatcher4 = myPattern4.matcher(tempStr);
+        int patternFlag = NOMAL;
+        Pattern variablePattern = Pattern.compile(CHECKVARIABLE, Pattern.DOTALL | Pattern.UNIX_LINES);
+        Pattern funcPattern = Pattern.compile(CHECKFUNC, Pattern.DOTALL | Pattern.UNIX_LINES);
+        Pattern valuePattern = Pattern.compile(CHECKVALUE, Pattern.DOTALL);
+        Pattern symbolPattern = Pattern.compile(CHECKSYMBOL, Pattern.DOTALL);
+        Pattern stringPattern = Pattern.compile(CHECKSTRING, Pattern.DOTALL);
+        Pattern commentPattern = Pattern.compile(CHECKCOMMENT, Pattern.DOTALL);
+        Pattern commentsPattern = Pattern.compile(CHECKCOMMENTS, Pattern.DOTALL);
+        Pattern includePattern = Pattern.compile(CHECKINCLUDE, Pattern.DOTALL);
+        Pattern endlinePattern = Pattern.compile(CHECKENDLINE, Pattern.DOTALL);
+        Pattern endcommentsPattern = Pattern.compile(CHECKENDCOMMENTS, Pattern.DOTALL);
+        Matcher variableMatcher = variablePattern.matcher(tempStr);
+        Matcher funcMatcher = funcPattern.matcher(tempStr);
+        Matcher valueMatcher = valuePattern.matcher(tempStr);
+        Matcher symbolMatcher = symbolPattern.matcher(tempStr);
+        Matcher stringMather = stringPattern.matcher(tempStr);
         Matcher commentMather = commentPattern.matcher(tempStr);
+        Matcher commentsMather = commentsPattern.matcher(tempStr);
+        Matcher includeMather = includePattern.matcher(tempStr);
+        Matcher endlineMather = endlinePattern.matcher(tempStr);
+        Matcher endcommentsMather = endcommentsPattern.matcher(tempStr);
 
-
-        if (myMatcher1.matches()) {
-            paternFlag = VARIABLE;
+        if (variableMatcher.matches()) {
+            patternFlag = VARIABLE;
         }
-        if (myMatcher2.matches()) {
-            paternFlag = FUNC;
+        if (funcMatcher.matches()) {
+            patternFlag = FUNC;
         }
-        if (myMatcher3.matches()) {
-            paternFlag = VALUE;
+        if (valueMatcher.matches()) {
+            patternFlag = VALUE;
         }
-        if (myMatcher4.matches()) {
-            paternFlag = SYMBOL;
+        if (symbolMatcher.matches()) {
+            patternFlag = SYMBOL;
         }
-        //if(commentMather.find()){
-        //        paternFlag = COMENT;
-        //}
-        return paternFlag;
+        if(includeMather.matches()){
+            includeFlag = true;
+        }
+        if(includeFlag && endlineMather.find()){
+            includeFlag = false;
+        }
+        if(!includeFlag) {
+            if (!stringFlag && stringMather.find()) {
+                stringFlag = true;
+                patternFlag = STRING;
+            }
+            if (stringFlag) {
+                patternFlag = STRING;
+            }
+            if (stringFlag && stringMather.find()) {
+                patternFlag = STRING;
+                stringFlag = false;
+            }
+        }
+        if(!commentFlag && commentMather.find()){
+            commentFlag = true;
+            patternFlag = COMMENT;
+        }
+        if(commentFlag){
+            patternFlag = COMMENT;
+        }
+        if(commentFlag && endlineMather.find()){
+            patternFlag = COMMENT;
+            commentFlag = false;
+        }
+        return patternFlag;
     }
 
     //文字の種類によって色分け
@@ -161,26 +207,26 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         //スペースをhtmlでも認識されるように変換
         if (spaceMatcher.find()) {
             setText = spaceMatcher.replaceAll("<pre>&nbsp;</pre>");
-            //Log.d("space", "***-" + setText + "-***");
         }
         if (tabMatcher.find()) {
             setText = tabMatcher.replaceAll("<pre>&nbsp;&nbsp;&nbsp;&nbsp;</pre>");
         }
+        Log.d("split", "***-" + setText + "-***");
         switch (typeFlag) {
             case NOMAL:
                 return setText;
             case VARIABLE:
-                return ("<font color=#8B4513>" + setText + "</font>");
+                return ("<font color=#deb887>" + setText + "</font>");
             case FUNC:
-                return ("<font color=#DAA520>" + setText + "</font>");
+                return ("<font color=#ff8c00>" + setText + "</font>");
             case VALUE:
                 return ("<font color=#4169E1>" + setText + "</font>");
             case SYMBOL:
                 return ("<font color=#B8860B>" + setText + "</font>");
-            case COMENT:
-                return ("<font color=#008000>" + setText + "</font>");
+            case COMMENT:
+                return ("<font color=#006400>" + setText + "</font>");
             case STRING:
-                break;
+                return ("<font color=#2e8b57>" + setText + "</font>");
         }
         return null;
     }
