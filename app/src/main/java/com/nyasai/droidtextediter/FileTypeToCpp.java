@@ -39,20 +39,20 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
             "void|auto|class|struct|union|enum|const|volatile|extern|" +
             "register|static|mutable|friend|explicit|inline|virtual|" +
             "public|protected|private|template|typname|asm|true|false|)";
-    private final String CHECKFUNC = ".*(typedef|operator|this|if|else|for|while|do|switch|case|default|" +
+    private final String CHECKFUNC = "(typedef|operator|this|if|else|for|while|do|switch|case|default|" +
             "break|continue|goto|return|try|catch|new|delete|dynamic_cast|static_cast|const_cast|reinterpret_cast|" +
             "sizeof|typeid|throw|namespace|using|#include|#define|and|and_eq|bitand|bitor|compl|not|not_eq|or|or_eq|xor|xor_eq|#if|#endif)";
     private final String CHECKVALUE = "[0-9]";
     private final String CHECKSYMBOL = "~|!|%|&|=|:|;|\"|'|,|/|<|>|&|\\||\\^|\\*|\\(|\\)|\\-|\\+|\\{|\\}|\\[|\\]|\\.|\\?";
     private final String CHECKCOMMENT = "//";
     private final String CHECKCOMMENTS = "/\\*";
-    private final String CHECKSTRING = "\"";
+    private final String CHECKSTRING = "\"|'";
     private final String CHECKINCLUDE = "#include";
     private final String CHECKENDLINE = "\n";
     private final String CHECKENDCOMMENTS = "\\*/";
-    private final String SPLITPATTERN = "(?<= )|(?= )|(?<=-)|(?=-)|(?<=\\()|(?=\\()|(?<=\\))|(?=\\))|(?<=\\*)|(?=\\*)|(?<=\")|(?=\")|(?<=\')|(?=\')|(?<=;)|(?=;)|(?<=\t)|(?=\t)" +
+    private final String SPLITPATTERN = "(?<= )|(?= )|(?<=-)|(?=-)|(?<=\\()|(?=\\()|(?<=\\))|(?=\\))|(?<=\")|(?=\")|(?<=\')|(?=\')|(?<=;)|(?=;)|(?<=\t)|(?=\t)" +
             "|(?<=:)|(?=:)|(?<==)|(?==)|(?<=,)|(?=,)|(?<=>)|(?=>)|(?<=\\[)|(?=\\[)|(?<=\\])|(?=\\])|(?<=\\.)|(?=\\.)|(?=\\})|(?<=\\})|(?=\\{)|(?<=\\{)" +
-            "|(?<=&)|(?=&)|(?<=\\|)|(?=\\|)|(?<=//)|(?=//)|(?<=/\\*)|(?=/\\*)|(?<=\\*/)|(?=\\*/)|(?<=!)|(?=!)";
+            "|(?<=&)|(?=&)|(?<=\\|)|(?=\\|)|(?<=//)|(?=//)|(?<=!)|(?=!)|(?<=/\\*)|(?=/\\*)|(?<=\\*/)|(?=\\*/)|(?<=(?<!/)\\*(?!/))|(?=(?<!/)\\*(?!/))";
 
 
     //コンストラクタ
@@ -92,7 +92,10 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
             }
         } else {
             TextView textView = (TextView) this.actionBarActivity.findViewById(R.id.myTextViewMain);
+            TextView linetextView =(TextView) this.actionBarActivity.findViewById(R.id.myTextViewLines);
+            this.actionBarActivity.setTitle(R.string.app_name);
             textView.setText("");
+            linetextView.setText("");
         }
         if (progressDialog.getShowsDialog()) {
             progressDialog.dismiss();
@@ -108,6 +111,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         Toast.makeText(actionBarActivity, "Canceled", Toast.LENGTH_SHORT).show();
         TextView textView = (TextView) this.actionBarActivity.findViewById(R.id.myTextViewMain);
         TextView linetextView =(TextView) this.actionBarActivity.findViewById(R.id.myTextViewLines);
+        this.actionBarActivity.setTitle(R.string.app_name);
         textView.setText("");
         linetextView.setText("");
 
@@ -165,7 +169,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         if (valueMatcher.matches()) {
             patternFlag = VALUE;
         }
-        if (symbolMatcher.matches()) {
+        if (symbolMatcher.find()) {
             patternFlag = SYMBOL;
         }
         //includeかどうかの判定
@@ -191,7 +195,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
             }
         }
         //コメント行であるかどうかの判定
-        if (!commentFlag && commentMather.find()) {
+        if (!commentFlag && commentMather.find() && !stringFlag) {
             commentFlag = true;
             patternFlag = COMMENT;
         }
@@ -201,6 +205,18 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         if (commentFlag && endlineMather.find()) {
             patternFlag = COMMENT;
             commentFlag = false;
+        }
+        //コメント行であるかどうかの判定
+        if (!commentsFlag && commentsMather.find()) {
+            commentsFlag = true;
+            patternFlag = COMMENT;
+        }
+        if (commentsFlag) {
+            patternFlag = COMMENT;
+        }
+        if (commentsFlag && endcommentsMather.find()) {
+            patternFlag = COMMENT;
+            commentsFlag = false;
         }
         return patternFlag;
     }
