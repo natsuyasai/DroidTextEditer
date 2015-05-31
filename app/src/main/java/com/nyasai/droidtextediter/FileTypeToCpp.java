@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayList<String>>{
+public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayList<String>> {
 
     ActionBarActivity actionBarActivity;
     MyProgressDialog progressDialog = null;
@@ -107,7 +107,10 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         }
         Toast.makeText(actionBarActivity, "Canceled", Toast.LENGTH_SHORT).show();
         TextView textView = (TextView) this.actionBarActivity.findViewById(R.id.myTextViewMain);
+        TextView linetextView =(TextView) this.actionBarActivity.findViewById(R.id.myTextViewLines);
         textView.setText("");
+        linetextView.setText("");
+
     }
 
     //メイン部分
@@ -165,13 +168,16 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         if (symbolMatcher.matches()) {
             patternFlag = SYMBOL;
         }
-        if(includeMather.matches()){
+        //includeかどうかの判定
+        //include後の”が文字列と判定されないために
+        if (includeMather.matches()) {
             includeFlag = true;
         }
-        if(includeFlag && endlineMather.find()){
+        if (includeFlag && endlineMather.find()) {
             includeFlag = false;
         }
-        if(!includeFlag) {
+        //文字列かどうかの判定
+        if (!includeFlag) {
             if (!stringFlag && stringMather.find()) {
                 stringFlag = true;
                 patternFlag = STRING;
@@ -184,14 +190,15 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
                 stringFlag = false;
             }
         }
-        if(!commentFlag && commentMather.find()){
+        //コメント行であるかどうかの判定
+        if (!commentFlag && commentMather.find()) {
             commentFlag = true;
             patternFlag = COMMENT;
         }
-        if(commentFlag){
+        if (commentFlag) {
             patternFlag = COMMENT;
         }
-        if(commentFlag && endlineMather.find()){
+        if (commentFlag && endlineMather.find()) {
             patternFlag = COMMENT;
             commentFlag = false;
         }
@@ -211,7 +218,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         if (tabMatcher.find()) {
             setText = tabMatcher.replaceAll("<pre>&nbsp;&nbsp;&nbsp;&nbsp;</pre>");
         }
-        Log.d("split", "***-" + setText + "-***");
+        //Log.d("split", "***-" + setText + "-***");
         switch (typeFlag) {
             case NOMAL:
                 return setText;
