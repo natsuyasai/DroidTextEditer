@@ -27,9 +27,9 @@ public class MainActivity extends ActionBarActivity {
     private FileTypeToCpp myFileTypeToCpp;
     private static final int SUB_ACTIVITY = 1001;
 
-    private void assignViews(){
-        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
-        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
+    private void assignViews() {
+        myTextViewMain = (TextView) findViewById(R.id.myTextViewMain);
+        myTextViewLines = (TextView) findViewById(R.id.myTextViewLines);
         myFileOpen = new MyFileOpen();
     }
 
@@ -41,8 +41,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     //アクティビティの移動
-    private void moveActivity(){
-        intent = new Intent(this,FileActivity.class);
+    private void moveActivity() {
+        intent = new Intent(this, FileActivity.class);
         startActivityForResult(intent, SUB_ACTIVITY);
     }
 
@@ -55,7 +55,7 @@ public class MainActivity extends ActionBarActivity {
             if (resultCode == RESULT_OK) {
                 this.myLoadText(dataBundle.getString("put.StrData"));
             }
-            if(resultCode == RESULT_CANCELED){
+            if (resultCode == RESULT_CANCELED) {
                 myTextViewLines.setText("");
                 this.setTitle(R.string.app_name);
                 myTextViewMain.setText("ファイルを選んでください");
@@ -65,42 +65,42 @@ public class MainActivity extends ActionBarActivity {
 
 
     //ファイルの読み出し,タイトルのセット,ファイルタイプの結果の受け取り
-    private void myLoadText(String setText){
+    private void myLoadText(String setText) {
         ArrayList<String> fileStr;
         int textLinesLen = 0;
         int fileTypeNum = 0;
-        this.clearTextView("","");
+        this.clearTextView("", "");
         this.setTitle(setText);
         fileTypeNum = this.checkFileType(setText);
         fileStr = myFileOpen.fileLoad(setText);
         textLinesLen = myFileOpen.getLines();
-        this.myChangeText(fileStr,textLinesLen,fileTypeNum);
+        this.myChangeText(fileStr, textLinesLen, fileTypeNum);
 
     }
 
 
     //文字色の置き換え
-    private void myChangeText(ArrayList<String> fileStr, int textLinesLen, int fileTypeNum){
+    private void myChangeText(ArrayList<String> fileStr, int textLinesLen, int fileTypeNum) {
         myFileTypeToCpp = new FileTypeToCpp(this);
-        switch (fileTypeNum){
+        switch (fileTypeNum) {
             case 0://txt
-                for(int i=0; i<fileStr.size(); i++){
+                for (int i = 0; i < fileStr.size(); i++) {
                     myTextViewMain.append(fileStr.get(i));
                 }
-                for(int i=1; i<=textLinesLen; i++){
+                for (int i = 1; i <= textLinesLen; i++) {
                     myTextViewLines.append(String.valueOf(i) + "\n");
                 }
                 break;
             case 1://c
                 myFileTypeToCpp.execute(fileStr);
-                for(int i=1; i<=textLinesLen; i++){
+                for (int i = 1; i <= textLinesLen; i++) {
                     myTextViewLines.append(String.valueOf(i) + "\n");
                 }
                 break;
             case 2://cpp
                 //this.myTextSets(myFileTypeToCpp.textSets(fileStr));
                 myFileTypeToCpp.execute(fileStr);
-                for(int i=1; i<=textLinesLen; i++){
+                for (int i = 1; i <= textLinesLen; i++) {
                     myTextViewLines.append(String.valueOf(i) + "\n");
                 }
                 break;
@@ -109,9 +109,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-
     //テキストビューのクリア
-    private void clearTextView(String newTitle,String oldTitle){
+    private void clearTextView(String newTitle, String oldTitle) {
         //そのうち実装
         //今のタイトルと次に読み込もうとしたファイルのタイトルが同じかどうかで判定
         myTextViewMain.setText("");
@@ -120,13 +119,13 @@ public class MainActivity extends ActionBarActivity {
 
 
     //ファイルタイプのチェック
-    private int checkFileType(String filePass){
-        String[] FILEFORMAT = {".*\\.txt" , ".*\\.c" , ".*\\.cpp"};
-        int fileTypeNum=0;
-        for(int i=0; i<FILEFORMAT.length; i++) {
+    private int checkFileType(String filePass) {
+        String[] FILEFORMAT = {".*\\.txt", ".*\\.c", ".*\\.cpp"};
+        int fileTypeNum = 0;
+        for (int i = 0; i < FILEFORMAT.length; i++) {
             Pattern myPattern = Pattern.compile(FILEFORMAT[i], Pattern.MULTILINE);
             Matcher myMatcher = myPattern.matcher(filePass);
-            if(myMatcher.find()){
+            if (myMatcher.find()) {
                 fileTypeNum = i;
             }
         }
@@ -134,14 +133,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-
-
     //戻るボタンを押された際に強制終了しないようにする
-    public boolean onKeyDown(int keyCode, KeyEvent e){
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+    public boolean onKeyDown(int keyCode, KeyEvent e) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             finish();
-        }
-        else {
+        } else {
             return false;
         }
         return false;
@@ -163,7 +159,7 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.action_settings:
                 break;
             case R.id.settings_open:
@@ -179,7 +175,6 @@ public class MainActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 
 }

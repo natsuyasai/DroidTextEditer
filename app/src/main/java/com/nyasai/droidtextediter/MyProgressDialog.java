@@ -12,7 +12,7 @@ public class MyProgressDialog extends DialogFragment {
     private static ProgressDialog progressDialog = null;
     private CancelListener listener;
 
-    public static MyProgressDialog newInstance(String title, String message, Boolean cancel, Serializable Cancel_Listener){
+    public static MyProgressDialog newInstance(String title, String message, Boolean cancel, Serializable Cancel_Listener) {
         MyProgressDialog instance = new MyProgressDialog();
 
         // ダイアログにパラメータを渡す
@@ -29,13 +29,13 @@ public class MyProgressDialog extends DialogFragment {
     }
 
     // キャンセルリスナ
-    public interface CancelListener extends Serializable{
+    public interface CancelListener extends Serializable {
         public void canceled(DialogInterface _interface);
     }
 
     // ProgressDialog作成
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState){
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (progressDialog != null)
             return progressDialog;
 
@@ -44,7 +44,7 @@ public class MyProgressDialog extends DialogFragment {
         String message = getArguments().getString("message");
         Boolean cancel = getArguments().getBoolean("cancel", false);
         // リスナーを設定
-        listener = (CancelListener)getArguments().getSerializable("Cancel_Listener");
+        listener = (CancelListener) getArguments().getSerializable("Cancel_Listener");
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setTitle(title);
@@ -53,10 +53,10 @@ public class MyProgressDialog extends DialogFragment {
         // プログレスダイアログのキャンセルが可能かどうかを設定（バックボタンでダイアログをキャンセルできないようにする）
         setCancelable(cancel);
 
-        if (cancel){ // キャンセルボタンありの場合はボタンを追加します。
-            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "キャンセル", new DialogInterface.OnClickListener(){
+        if (cancel) { // キャンセルボタンありの場合はボタンを追加します。
+            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "キャンセル", new DialogInterface.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which){
+                public void onClick(DialogInterface dialog, int which) {
                     listener.canceled(dialog);
                 }
             });
@@ -67,22 +67,22 @@ public class MyProgressDialog extends DialogFragment {
 
     // progressDialog取得
     @Override
-    public Dialog getDialog(){
+    public Dialog getDialog() {
         return progressDialog;
     }
 
     // ProgressDialog破棄
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         progressDialog = null;
     }
 
     // キャンセルのときに、リスナーに通知します。
     @Override
-    public void onCancel(DialogInterface dialog){
-        if (getArguments().getBoolean("cancel", false)){
+    public void onCancel(DialogInterface dialog) {
+        if (getArguments().getBoolean("cancel", false)) {
             listener.canceled(dialog);
         }
     }
-    }
+}

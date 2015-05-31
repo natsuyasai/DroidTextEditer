@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MyFileOpen extends Activity{
+public class MyFileOpen extends Activity {
     //デフォルトエンコードの指定
     private static final String DEFAULT_ENCORDING = "UTF-8";
     private static int textLines;
@@ -45,26 +45,26 @@ public class MyFileOpen extends Activity{
         return files.toString();
     }*/
 
-    public ArrayList<String> fileLoad(String fileName){
+    public ArrayList<String> fileLoad(String fileName) {
         ArrayList<String> files = new ArrayList<String>();
         String tempFiles;
         textLines = 0;
 
-        try{
+        try {
             FileInputStream inputStream = new FileInputStream(new File(fileName));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream,DEFAULT_ENCORDING));
-            while ((tempFiles = reader.readLine()) != null ){
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, DEFAULT_ENCORDING));
+            while ((tempFiles = reader.readLine()) != null) {
                 files.add(tempFiles + "\n");
                 textLines++;
             }
             reader.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             files.add("This File null");
         }
         return files;
     }
 
-    public static int getLines(){
+    public static int getLines() {
         return textLines;
     }
 

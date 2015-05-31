@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -30,11 +31,12 @@ import java.util.regex.Pattern;
 
 public class FileActivity extends ListActivity {
 
-    private enum DISPLAYMODE{ ABSOLUTE,RELATIVE; }
+    private enum DISPLAYMODE {ABSOLUTE, RELATIVE;}
+
     private final DISPLAYMODE displayMode = DISPLAYMODE.ABSOLUTE;
     private ArrayList<String> directoryEntries = new ArrayList<String>();
     private File currentDirectory = new File("/");
-    private final String FILEFORMAT = ".*\\.txt|.*\\.cpp|.*\\.c" ;
+    private final String FILEFORMAT = ".*\\.txt|.*\\.cpp|.*\\.c";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,24 +49,24 @@ public class FileActivity extends ListActivity {
         browseTo(new File("/"));
     }
 
-    private void upOneLevel(){
-        if(this.currentDirectory.getParent() != null) {
+    private void upOneLevel() {
+        if (this.currentDirectory.getParent() != null) {
             this.browseTo(this.currentDirectory.getParentFile());
         }
     }
 
     private void browseTo(final File aDirectory) {
-        Pattern myPattern = Pattern.compile(FILEFORMAT,Pattern.MULTILINE);
+        Pattern myPattern = Pattern.compile(FILEFORMAT, Pattern.MULTILINE);
         Matcher myMatcher = myPattern.matcher(aDirectory.getName());
         String fileName = aDirectory.getName();
         Boolean fileFlag = myMatcher.find();
 
-        if(aDirectory.isDirectory()){
+        if (aDirectory.isDirectory()) {
             this.currentDirectory = aDirectory;
             fill(aDirectory.listFiles());
         }
         //指定したファイルがサポートしているとき
-        else if(fileFlag){
+        else if (fileFlag) {
             Intent intent = new Intent();
             Bundle dataBundle = new Bundle();
             dataBundle.putString("put.StrData", aDirectory.getPath());
@@ -72,17 +74,16 @@ public class FileActivity extends ListActivity {
             //Log.d("log2", aDirectory.getPath());
             setResult(RESULT_OK, intent);
             finish();
-        }
-        else{
-            OnClickListener okButtonListener = new OnClickListener(){
+        } else {
+            OnClickListener okButtonListener = new OnClickListener() {
                 // @Override
                 public void onClick(DialogInterface arg0, int arg1) {
                     Intent myIntent = new Intent(Intent.ACTION_VIEW,
-                                      Uri.parse("file://" + aDirectory.getAbsolutePath()));
+                            Uri.parse("file://" + aDirectory.getAbsolutePath()));
                     startActivity(myIntent);
                 }
             };
-            OnClickListener cancelButtonListener = new OnClickListener(){
+            OnClickListener cancelButtonListener = new OnClickListener() {
                 // @Override
                 public void onClick(DialogInterface arg0, int arg1) {
                     // Do nothing
@@ -90,7 +91,7 @@ public class FileActivity extends ListActivity {
             };
             new AlertDialog.Builder(this)
                     .setTitle("Warning")
-                    .setMessage("This file is not support\n"+ aDirectory.getName())
+                    .setMessage("This file is not support\n" + aDirectory.getName())
                     /*.setPositiveButton("OK", okButtonListener)*/
                     .setNegativeButton("Cancel", cancelButtonListener)
                     .show();
@@ -98,9 +99,8 @@ public class FileActivity extends ListActivity {
     }
 
 
-
     private void fill(File[] files) {
-        Pattern myPattern = Pattern.compile(FILEFORMAT,Pattern.MULTILINE);
+        Pattern myPattern = Pattern.compile(FILEFORMAT, Pattern.MULTILINE);
 
         this.directoryEntries.clear();
         // Add the "." and the ".." == 'Up one level'
@@ -111,20 +111,24 @@ public class FileActivity extends ListActivity {
         }
         this.directoryEntries.add(getString(R.string.current_dir));
 
-        if(this.currentDirectory.getParent() != null)
+        if (this.currentDirectory.getParent() != null)
             this.directoryEntries.add(getString(R.string.up_one_level));
 
-        switch(this.displayMode){
+        switch (this.displayMode) {
             case ABSOLUTE:
-                if(files == null){break;}
-                for (File file : files){
+                if (files == null) {
+                    break;
+                }
+                for (File file : files) {
                     this.directoryEntries.add(file.getPath());
                 }
                 break;
             case RELATIVE: // On relative Mode, we have to add the current-path to the beginning
-                if(files == null){break;}
+                if (files == null) {
+                    break;
+                }
                 int currentPathStringLenght = this.currentDirectory.getAbsolutePath().length();
-                for (File file : files){
+                for (File file : files) {
                     this.directoryEntries.add(file.getAbsolutePath().substring(currentPathStringLenght));
                 }
                 break;
@@ -150,11 +154,11 @@ public class FileActivity extends ListActivity {
         if (selectedFileString.equals(".")) {
             // Refresh
             this.browseTo(this.currentDirectory);
-        } else if(selectedFileString.equals("..")){
+        } else if (selectedFileString.equals("..")) {
             this.upOneLevel();
         } else {
             File clickedFile = null;
-            switch(this.displayMode){
+            switch (this.displayMode) {
                 case RELATIVE:
                     clickedFile = new File(this.currentDirectory.getAbsolutePath() + selectedFileString);
                             /*+ this.directoryEntries.get(selectionRowID));*/
@@ -164,22 +168,24 @@ public class FileActivity extends ListActivity {
                     clickedFile = new File(selectedFileString);
                     break;
             }
-            if(clickedFile != null) {this.browseTo(clickedFile);}
+            if (clickedFile != null) {
+                this.browseTo(clickedFile);
+            }
         }
     }
 
     //戻るボタンを押された際に強制終了しないようにする
-    public boolean dispatchKeyEvent(KeyEvent e){
-        if(e.getAction() == KeyEvent.KEYCODE_BACK){
+    public boolean dispatchKeyEvent(KeyEvent e) {
+        if (e.getAction() == KeyEvent.KEYCODE_BACK) {
             return false;
-        }
-        else{
+        } else {
             Intent intent = new Intent();
             Bundle dataBundle = new Bundle();
             dataBundle.putString("put.StrData", "Failed");
             intent.putExtras(dataBundle);
             setResult(RESULT_CANCELED, intent);
             finish();
-            return true;}
+            return true;
+        }
     }
 }
