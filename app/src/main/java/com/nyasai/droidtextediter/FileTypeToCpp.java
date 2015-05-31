@@ -22,6 +22,14 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
     MyProgressDialog progressDialog = null;
 
 
+    private static final int NOMAL = 0;
+    private static final int VARIABLE = 1;
+    private static final int FUNC = 2;
+    private static final int VALUE = 3;
+    private static final int SYMBOL = 4;
+    private static final int COMENT = 5;
+    private static final int STRING = 6;
+
     private final String CHECKSTR1 = "(int|long|short|signed|unsigned|float|double|bool|char|wchar_t|" +
             "void|auto|class|struct|union|enum|const|volatile|extern|" +
             "register|static|mutable|friend|explicit|inline|virtual|" +
@@ -37,6 +45,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
             "|(?<=&)|(?=&)|(?<=\\|)|(?=\\|)";
 
 
+    //コンストラクタ
     public FileTypeToCpp(ActionBarActivity actionBarActivity) {
         this.actionBarActivity = actionBarActivity;
     }
@@ -112,7 +121,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
 
     //文字のチェック
     private int checkReservedword(String tempStr) {
-        int paternFlag = 0;
+        int paternFlag = NOMAL;
         Pattern myPattern1 = Pattern.compile(CHECKSTR1, Pattern.DOTALL | Pattern.UNIX_LINES);
         Pattern myPattern2 = Pattern.compile(CHECKSTR2, Pattern.DOTALL | Pattern.UNIX_LINES);
         Pattern myPattern3 = Pattern.compile(CHECKSTR3, Pattern.DOTALL);
@@ -126,19 +135,19 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
 
 
         if (myMatcher1.matches()) {
-            paternFlag = 1;
+            paternFlag = VARIABLE;
         }
         if (myMatcher2.matches()) {
-            paternFlag = 2;
+            paternFlag = FUNC;
         }
         if (myMatcher3.matches()) {
-            paternFlag = 3;
+            paternFlag = VALUE;
         }
         if (myMatcher4.matches()) {
-            paternFlag = 4;
+            paternFlag = SYMBOL;
         }
         //if(commentMather.find()){
-        //        paternFlag = 5;
+        //        paternFlag = COMENT;
         //}
         return paternFlag;
     }
@@ -158,19 +167,20 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
             setText = tabMatcher.replaceAll("<pre>&nbsp;&nbsp;&nbsp;&nbsp;</pre>");
         }
         switch (typeFlag) {
-            case 0:
+            case NOMAL:
                 return setText;
-            case 1:
+            case VARIABLE:
                 return ("<font color=#8B4513>" + setText + "</font>");
-            case 2:
+            case FUNC:
                 return ("<font color=#DAA520>" + setText + "</font>");
-            case 3:
+            case VALUE:
                 return ("<font color=#4169E1>" + setText + "</font>");
-            case 4:
+            case SYMBOL:
                 return ("<font color=#B8860B>" + setText + "</font>");
-            case 5:
+            case COMENT:
                 return ("<font color=#008000>" + setText + "</font>");
-
+            case STRING:
+                break;
         }
         return null;
     }
