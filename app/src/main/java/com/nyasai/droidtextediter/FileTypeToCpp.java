@@ -35,6 +35,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
     private static boolean commentsFlag = false;
     private static boolean stringFlag = false;
     private static boolean includeFlag = false;
+    private static boolean cancellFlag = false;
 
     private final String CHECKVARIABLE = "(int|long|short|signed|unsigned|float|double|bool|char|wchar_t|" +
             "void|auto|class|struct|union|enum|const|volatile|extern|" +
@@ -70,6 +71,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
             @Override
             public void canceled(DialogInterface _interface) {
                 cancel(true); // これをTrueにすることでキャンセルされ、onCancelledが呼び出される。
+                cancellFlag = true;
             }
         };
         progressDialog = MyProgressDialog.newInstance("処理中", "しばらくお待ちください\n※行数が多い場合は処理終了後表示に時間がかかります", true, Cancel_Listener);
@@ -130,6 +132,10 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
             for (int j = 0; j < fileStrOneWords.length; j++) {
                 typeFlag = this.checkReservedword(fileStrOneWords[j]);
                 endFiles.add(this.textSetBranch(typeFlag, fileStrOneWords[j]));
+                if (cancellFlag){
+                    cancellFlag = false;
+                    return endFiles;
+                }
             }
             fileStrOneWords = null;
             endFiles.add("<br/>");
@@ -238,7 +244,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         if (tabMatcher.find()) {
             setText = tabMatcher.replaceAll("<pre>&nbsp;&nbsp;&nbsp;&nbsp;</pre>");
         }
-        //Log.d("split", "***-" + setText + "-***");
+        Log.d("split", "***-" + setText + "-***");
         switch (typeFlag) {
             case NOMAL:
                 return setText;
