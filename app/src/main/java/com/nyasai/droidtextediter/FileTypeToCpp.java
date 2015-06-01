@@ -29,6 +29,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
     private static final int SYMBOL = 4;
     private static final int COMMENT = 5;
     private static final int STRING = 6;
+    private static final int INCLUDE = 7;
 
     private static boolean commentFlag = false;
     private static boolean commentsFlag = false;
@@ -48,7 +49,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
     private final String CHECKCOMMENTS = "/\\*";
     private final String CHECKSTRING = "\"|'";
     private final String CHECKINCLUDE = "#include";
-    private final String CHECKENDLINE = "\n";
+    private final String CHECKENDLINE = "\n|<br/>";
     private final String CHECKENDCOMMENTS = "\\*/";
     private final String SPLITPATTERN = "(?<= )|(?= )|(?<=-)|(?=-)|(?<=\\()|(?=\\()|(?<=\\))|(?=\\))|(?<=\")|(?=\")|(?<=\')|(?=\')|(?<=;)|(?=;)|(?<=\t)|(?=\t)" +
             "|(?<=:)|(?=:)|(?<==)|(?==)|(?<=,)|(?=,)|(?<=>)|(?=>)|(?<=\\[)|(?=\\[)|(?<=\\])|(?=\\])|(?<=\\.)|(?=\\.)|(?=\\})|(?<=\\})|(?=\\{)|(?<=\\{)" +
@@ -177,6 +178,9 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         if (includeMather.matches()) {
             includeFlag = true;
         }
+        if (includeFlag){
+            patternFlag = INCLUDE;
+        }
         if (includeFlag && endlineMather.find()) {
             includeFlag = false;
         }
@@ -207,7 +211,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
             commentFlag = false;
         }
         //コメント行であるかどうかの判定
-        if (!commentsFlag && commentsMather.find()) {
+        if (!commentsFlag && commentsMather.find() && !stringFlag) {
             commentsFlag = true;
             patternFlag = COMMENT;
         }
@@ -250,6 +254,8 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
                 return ("<font color=#006400>" + setText + "</font>");
             case STRING:
                 return ("<font color=#2e8b57>" + setText + "</font>");
+            case INCLUDE:
+                return ("<font color=#ff7f50>" + setText + "</font>");
         }
         return null;
     }
