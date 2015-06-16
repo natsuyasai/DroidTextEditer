@@ -244,7 +244,7 @@ public class FileTypeToCpp extends AsyncTask<ArrayList<String>, Integer, ArrayLi
         if (tabMatcher.find()) {
             setText = tabMatcher.replaceAll("<pre>&nbsp;&nbsp;&nbsp;&nbsp;</pre>");
         }
-        Log.d("split", "***-" + setText + "-***");
+        //Log.d("split", "***-" + setText + "-***");
         switch (typeFlag) {
             case NOMAL:
                 return setText;

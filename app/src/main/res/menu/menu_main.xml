@@ -7,17 +7,22 @@
         android:title="@string/settings_exit"
         android:orderInCategory="200"
         app:showAsAction="never" />
-
     <item
-        android:id="@+id/settings_search"
-        android:title="@string/settings_search"
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
         android:orderInCategory="150"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+        android:id="@+id/settings_search"
+        android:title="@string/settings_search"
         android:orderInCategory="100"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/settings_zoom"
+        android:title="@string/settings_zoom"
+        android:orderInCategory="50"
         app:showAsAction="never" />
 
     <item
@@ -25,5 +30,7 @@
         android:title="@string/settings_open"
         android:orderInCategory="000"
         app:showAsAction="never" />
+
+
 
 </menu>

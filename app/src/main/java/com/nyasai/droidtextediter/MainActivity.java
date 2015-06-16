@@ -9,9 +9,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ZoomControls;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -21,8 +23,10 @@ import java.util.regex.Pattern;
 public class MainActivity extends ActionBarActivity {
 
     private Intent intent;
+    private float scale=0;
     private TextView myTextViewMain;
     private TextView myTextViewLines;
+    private ZoomControls myZoomControls;
     private MyFileOpen myFileOpen;
     private FileTypeToCpp myFileTypeToCpp;
     private static final int SUB_ACTIVITY = 1001;
@@ -30,6 +34,7 @@ public class MainActivity extends ActionBarActivity {
     private void assignViews() {
         myTextViewMain = (TextView) findViewById(R.id.myTextViewMain);
         myTextViewLines = (TextView) findViewById(R.id.myTextViewLines);
+        myZoomControls = (ZoomControls) findViewById(R.id.zoomButton);
         myFileOpen = new MyFileOpen();
     }
 
@@ -143,6 +148,38 @@ public class MainActivity extends ActionBarActivity {
         return false;
     }
 
+    //ズームボタンの動作設定
+    private void startZoomButton(){
+        myZoomControls.setVisibility(View.VISIBLE);
+        scale = myTextViewMain.getTextScaleX();
+        myZoomControls.setOnZoomOutClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scale -= 0.1;
+                myTextViewMain.setTextSize(scale);
+                myTextViewMain.setTextSize(scale);
+                myTextViewLines.setTextSize(scale);
+                myTextViewLines.setTextSize(scale);
+            }
+        });
+        myZoomControls.setOnZoomInClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scale += 0.1;
+                myTextViewMain.setTextSize(scale);
+                myTextViewMain.setTextSize(scale);
+                myTextViewLines.setTextSize(scale);
+                myTextViewLines.setTextSize(scale);
+            }
+        });
+    }
+
+
+    public void myTextViewOnClick(View v){
+        myZoomControls.setVisibility(View.INVISIBLE);
+    }
+
+
 
     //メニュー関連
     @Override
@@ -167,6 +204,9 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case R.id.settings_search:
                 break;
+            case R.id.settings_zoom:
+                this.startZoomButton();
+                break;
             case R.id.settings_exit:
                 finish();
                 break;
@@ -178,20 +218,3 @@ public class MainActivity extends ActionBarActivity {
 
 
 }
-//テキストファイルのセット
-    /*private void myTextSet(String setTitle, String setText){
-        String fileStr = null;
-        int textLinesLen = 0;
-        myTextViewMain = (TextView)findViewById(R.id.myTextViewMain);
-        myTextViewLines = (TextView)findViewById(R.id.myTextViewLines);
-        myFileOpen = new MyFileOpen();
-
-
-        this.setTitle(setTitle);
-        fileStr = myFileOpen.fileLoad(setText);
-        myTextViewMain.setText(fileStr);
-        textLinesLen = myFileOpen.getLines();
-        for(int i=1; i<=textLinesLen; i++){
-            myTextViewLines.append(String.valueOf(i) + "\n");
-        }
-    }*/
