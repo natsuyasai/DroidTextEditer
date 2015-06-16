@@ -151,11 +151,11 @@ public class MainActivity extends ActionBarActivity {
     //ズームボタンの動作設定
     private void startZoomButton(){
         myZoomControls.setVisibility(View.VISIBLE);
-        scale = myTextViewMain.getTextScaleX();
+        scale = 18;
         myZoomControls.setOnZoomOutClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scale -= 0.1;
+                scale -= 0.3;
                 myTextViewMain.setTextSize(scale);
                 myTextViewMain.setTextSize(scale);
                 myTextViewLines.setTextSize(scale);
@@ -165,7 +165,7 @@ public class MainActivity extends ActionBarActivity {
         myZoomControls.setOnZoomInClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scale += 0.1;
+                scale += 0.3;
                 myTextViewMain.setTextSize(scale);
                 myTextViewMain.setTextSize(scale);
                 myTextViewLines.setTextSize(scale);
